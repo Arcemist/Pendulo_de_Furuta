@@ -1,4 +1,4 @@
-Struct Encoder {
+struct Encoder {
   int A;
   int B;
   int Z;
@@ -40,7 +40,7 @@ void setup() {
 void loop() {}
 
 void Brazo_A() {
- if (digitalRead(brazo.B) == HIGH) {
+ if (digitalRead(brazo.B) == LOW) {
     brazo.count++;
   } else {
     brazo.count--;

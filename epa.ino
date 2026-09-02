@@ -8,6 +8,8 @@ struct Encoder {
 Encoder brazo;
 Encoder pendulo;
 
+bool cambio = 0;
+
 void setup() {
 
   brazo.A = 3;
@@ -37,19 +39,30 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(pendulo.Z), Pendulo_Z, RISING);
 }
 
-void loop() {}
+void loop() {
+  if (cambio) {
+    Serial.print("Brazo: ");
+    Serial.println(brazo.count);
+    Serial.print("Pendulo: ");
+    Serial.println(pendulo.count);
+    Serial.println("");
+    Serial.println("");
+    cambio = 0;
+  }
+}
 
 void Brazo_A() {
  if (digitalRead(brazo.B) == LOW) {
     brazo.count++;
   } else {
     brazo.count--;
-  }
+  };
+  cambio = 1;
 }
 
 void Brazo_Z() {
-  Serial.print("Brazo: ");
-  Serial.println(brazo.count);
+  //Serial.print("Brazo: ");
+  //Serial.println(brazo.count);
   brazo.count = 0;
 }
 
@@ -58,11 +71,12 @@ void Pendulo_A() {
     pendulo.count++;
   } else {
     pendulo.count--;
-  }
+  };
+  cambio = 1;
 }
 
 void Pendulo_Z() {
-  Serial.print("Pendulo: ");
-  Serial.println(pendulo.count);
+  //Serial.print("Pendulo: ");
+  //Serial.println(pendulo.count);
   pendulo.count = 0;
 }

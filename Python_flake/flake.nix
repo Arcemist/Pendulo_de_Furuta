@@ -20,7 +20,9 @@
 	  (pkgs.python3.withPackages (py-pkgs: with py-pkgs; [
 	      python-lsp-server
 
+	      scipy
 	      matplotlib
+	      pandas
 	      numpy
 	      pyserial
 	  ]))

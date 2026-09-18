@@ -3,7 +3,7 @@ from datetime import datetime
 import time
 import serial
 
-PORT = "/dev/ttyUSB0"
+PORT = "/dev/ttyACM0"
 BAUD_RATE = 9600
 OUTPUT_FILE = "arduino_data.csv"
 
@@ -25,18 +25,22 @@ try:
 
     # Add field name line if opening an empty csv file
     if file.tell() == 0:
-      writer.writerow(["Timestamp", "Sensor_Value", "example"])
+      #writer.writerow(["Timestamp", "Sensor_Value", "example"])
+      writer.writerow(["Timestamp", "Pendulo"])
 
     while True:
       if ser.in_waiting > 0:
+        #line = ser.readline().decode("utf-8").strip()
+        #info = line.split(",")
         line = ser.readline().decode("utf-8").strip()
-        info = line.split(",")
 
         if line:
-          timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-          writer.writerow([timestamp, info[0], info[1]])
+          timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+          #writer.writerow([timestamp, info[0], info[1]])
+          writer.writerow([timestamp, line])
           file.flush()
-          print(f"[{timestamp}] {info[0]} {info[1]}")
+          #print(f"[{timestamp}] {info[0]} {info[1]}")
+          print(f"[{timestamp}] {line}")
 
 except serial.SerialException as e:
   print(f"Serial Error: {e}")

@@ -6,6 +6,6 @@ pd.plotting.register_matplotlib_converters()
 datos = pd.read_csv("arduino_data.csv", parse_dates=["Timestamp"])
 
 plt.figure(dpi=100)
-plt.scatter("Timestamp", "Pendulo", data=datos )
+plt.plot("Timestamp", "Pendulo", data=datos )
 
 plt.show()

@@ -9,7 +9,7 @@ from scipy.signal import find_peaks
 # ==========================================
 m2 = 0.0992       # Masa del péndulo [kg]
 L2 = 0.136        # Distancia al CM / Longitud [m]
-J2 = 2.24e-3      # Momento de inercia J2 [kg*m^2]
+J2 = 2.3940267e-3      # Momento de inercia J2 [kg*m^2]
 g = 9.81          # Aceleración de la gravedad [m/s^2]
 
 K = (m2 * g * L2) / J2

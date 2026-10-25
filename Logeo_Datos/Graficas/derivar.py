@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from scipy.signal import savgol_filter, find_peaks
 
 # Traer los datos
 df = pd.read_csv("arduino_data.csv")
@@ -8,40 +9,46 @@ df['Timestamp'] = pd.to_datetime(df['Timestamp'])
 
 # Conversion de pulsos del encoder a grados
 df['Pendulo_grados'] = df['Pendulo'] * (360 / 1024)
-
 # Y desplazamiento para que quede centrado
 df['Pendulo_grados'] = df['Pendulo_grados'] - 180
 
 # Intento de hacer tiempo desde inicio
-df['Delta_Tiempo'] = pd.to_timedelta(df['Timestamp'] - df['Timestamp'][0])
-df['Segundos_desde_inicio'] = df['Delta_Tiempo'].dt.total_seconds()
+df['Segundos_desde_inicio'] = pd.to_timedelta( df['Timestamp'] - df['Timestamp'][0] ).dt.total_seconds()
+dt = np.mean( np.diff( df['Segundos_desde_inicio'].values ) )
 
-# Definicion del array de deltas en el tiempo
-# Sorpresivamente importante para que las derivadas no sean 10^-6 veces mas chicas
-dt = df['Delta_Tiempo'] / np.timedelta64(1, 's')
+# Filtrado de la posicion
+df['Posicion'] = savgol_filter(
+    df['Pendulo_grados'],
+    window_length=31,
+    polyorder=3,
+    deriv=0,
+)
 
-# Calculo de la derivada del angulo y su subsecuente filtrado
-df['Velocidad'] = np.gradient(df['Pendulo_grados'], dt)
-df['Velocidad'] = df['Velocidad'].rolling(
-    window=25, center=True
-).mean()
+# Calculo y filtrado de la Velocidad
+df['Velocidad'] = savgol_filter(
+    df['Pendulo_grados'],
+    window_length=31,
+    polyorder=3,
+    deriv=1,
+    delta=dt
+)
 
-# Calculo de la derivada de la velocidad filtrada y su posterior filtrado
-# Necesita calcularse con la velocidad ya filtrada y ser filtrado devuelta
-# Almenos con este tipo de filtro
-df['Aceleracion'] = np.gradient(df['Velocidad'], dt)
-df['Aceleracion'] = df['Aceleracion'].rolling(
-    window=25, center=True
-).mean()
+# Calculo y filtrado de la Aceleracion
+df['Aceleracion'] = savgol_filter(
+    df['Pendulo_grados'],
+    window_length=71,
+    polyorder=3,
+    deriv=2,
+    delta=dt
+)
 
 # Ploteado de los resultados
 df.plot.line(
     y=[
-        'Pendulo_grados',
+        'Posicion',
         'Velocidad',
         'Aceleracion'
     ],
     x='Segundos_desde_inicio'
 )
 plt.show()
-

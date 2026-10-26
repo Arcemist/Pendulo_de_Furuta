@@ -18,7 +18,7 @@ const Modos_Salida Modo_Salida = LEGIBLE;
 void setup() {
   Serial.begin(115200); // Maximo estable
 
-  while (true) {
+  while (false) {
     if (Serial.available() > 0) {
       char incomingByte = Serial.read();
       if (incomingByte == 'S') {
@@ -34,17 +34,16 @@ void setup() {
   Inicializar_telemetria();
 }
 
-char Commando;
+char Comando;
 void loop() {
   if (Serial.available() > 0) {
-    const String lectura_serial = Serial.readStringUntil('\n');
+    String lectura_serial = Serial.readStringUntil('\n');
     
-    Commando = 0x00; // placeholder
-    if (isascii( lectura_serial[0] )) {
-       Commando = toUpperCase( lectura_serial[0] );
-    };
+    float argumento = lectura_serial.substring(1).toFloat();
 
-    switch (Commando) {
+    Comando = lectura_serial[0];
+
+    switch (Comando) {
       case 'E':
         Encender_Motor();
       break;
@@ -54,9 +53,8 @@ void loop() {
       break;
 
       case 'P':
-        float espera = lectura_serial.substring(2).toFloat();
         Encender_Motor();
-        delay(espera * 1000.0);
+        delay(argumento * 1000.0);
         Apagar_Motor();
       break;
 
@@ -69,13 +67,11 @@ void loop() {
       break;
 
       case 'V':
-        float porcentaje = lectura_serial.substring(2).toFloat();
-        Configurar_Duty_Cycle(porcentaje);
+        Configurar_Duty_Cycle(argumento);
       break;
 
       case 'T':
-        float segundos = lectura_serial.substring(2).toFloat();
-        Ajustar_Reduccion(segundos);
+        Ajustar_Reduccion(argumento);
       break;
 
       default:

@@ -16,6 +16,10 @@ inline void Inicializar_telemetria() {
   de reloj de 0.1ms o 10kHz
   
   */
+  TCCR1B = 0;
+  TCCR1A = 0;
+  TCCR1C = 0;
+
   TCCR1B |= (1 << WGM12);
   TCCR1B |= (1 << CS11);
   OCR1A = 199;

@@ -28,6 +28,10 @@ inline void Inicializar_motor() {
 
   noInterrupts();
 
+  TCCR4A = 0;
+  TCCR4B = 0;
+  TCCR4C = 0;
+
   // Supuestamente elige PWM phase correct con TOP ICR
   TCCR4A |= (1 << WGM41);
   TCCR4B |= (1 << WGM43);

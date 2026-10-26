@@ -39,13 +39,13 @@ inline void Inicializar_motor() {
   Frec = (16*10^6) / 2*1*ICR4
   Frec = (8*10^6) / ICR4
 
-  Y por lo tanto con ICR4 en 800 la frecuencia
-  es igual a 10kHz 
+  Y por lo tanto con ICR4 en 4000 la frecuencia
+  es igual a 2kHz 
   */
-  ICR4 = 800;
+  ICR4 = 4000;
 
   // 50% por defecto
-  OCR4A = 400;
+  OCR4A = 2000;
 
   interrupts();
 }
@@ -54,7 +54,7 @@ inline void Configurar_Duty_Cycle(float porcentaje) {
   if (porcentaje > 100.0) { porcentaje = 100.0; };
   if (porcentaje < 0.0)   { porcentaje = 0.0; };
 
-  OCR4A = floor ( 800.0 * (porcentaje / 100.0) );
+  OCR4A = floor ( 4000.0 * (porcentaje / 100.0) );
 }
 
 inline void Apagar_Motor() { TCCR4A &= ~(1 << COM4A1); }

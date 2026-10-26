@@ -1,62 +1,23 @@
-struct Encoder {
-  const int A;
-  const int B;
-  const int Z;
-  volatile int count;
+/* Seleccion de modo de funcionamiento
+La siguiente constante determina el modo en el cual
+sera compilado el programa.
+*/
+enum Modos_Funcionamiento { 
+  PRUEBA_PENDULO,
+  PRUEBA_MOTOR,
 };
+const Modos_Funcionamiento
+  Modo_Funcionamiento = PRUEBA_MOTOR;
 
-Encoder brazo = {
-  .A = 3,
-  .B = 5,
-  .Z = 2,
-  .count = 0
+enum Modos_Salida {
+  LEGIBLE,
+  RT_BURST
 };
-
-Encoder pendulo = {
-  .A = 18,
-  .B = 16,
-  .Z = 19,
-  .count = 0
-};
-
-bool cambio = 0;
+const Modos_Salida Modo_Salida = LEGIBLE;
 
 void setup() {
+  Serial.begin(115200); // Maximo estable
 
-  // Cosas del Brazo
-  pinMode(brazo.A, INPUT_PULLUP);
-  pinMode(brazo.B, INPUT_PULLUP);
-  pinMode(brazo.Z, INPUT_PULLUP);
-
-  attachInterrupt(
-    digitalPinToInterrupt(brazo.A),
-    Brazo_Movimiento,
-    RISING
-  );
-  attachInterrupt(
-    digitalPinToInterrupt(brazo.Z),
-    Brazo_Referencia,
-    RISING
-  );
-
-  // Cosas del Pendulo
-  pinMode(pendulo.A, INPUT_PULLUP);
-  pinMode(pendulo.B, INPUT_PULLUP);
-  pinMode(pendulo.Z, INPUT_PULLUP);
-
-  attachInterrupt(
-    digitalPinToInterrupt(pendulo.A),
-    Pendulo_Movimiento,
-    RISING
-  );
-  attachInterrupt(
-    digitalPinToInterrupt(pendulo.Z),
-    Pendulo_Referencia,
-    RISING
-  );
-
-  // Esperar la señal de sincronia
-  Serial.begin(9600);
   while (true) {
     if (Serial.available() > 0) {
       char incomingByte = Serial.read();
@@ -66,11 +27,59 @@ void setup() {
     }
   };
 
+  Inicializar_encoders();
+
+  Inicializar_motor();
+
+  Inicializar_telemetria();
 }
 
+char Commando;
 void loop() {
-  if (cambio) {
-    Enviar_Valores();
-    cambio = 0;
+  if (Serial.available() > 0) {
+    const String lectura_serial = Serial.readStringUntil('\n');
+    
+    Commando = 0x00; // placeholder
+    if (isascii( lectura_serial[0] )) {
+       Commando = toUpperCase( lectura_serial[0] );
+    };
+
+    switch (Commando) {
+      case 'E':
+        Encender_Motor();
+      break;
+      
+      case 'A':
+        Apagar_Motor();
+      break;
+
+      case 'P':
+        float espera = lectura_serial.substring(2).toFloat();
+        Encender_Motor();
+        delay(espera * 1000.0);
+        Apagar_Motor();
+      break;
+
+      case 'D':
+        Motor_Derecha();
+      break;
+
+      case 'I':
+        Motor_Izquierda();
+      break;
+
+      case 'V':
+        float porcentaje = lectura_serial.substring(2).toFloat();
+        Configurar_Duty_Cycle(porcentaje);
+      break;
+
+      case 'T':
+        float segundos = lectura_serial.substring(2).toFloat();
+        Ajustar_Reduccion(segundos);
+      break;
+
+      default:
+        Serial.println("Se ha ingresado un commando invalido");
+    }
   }
 }

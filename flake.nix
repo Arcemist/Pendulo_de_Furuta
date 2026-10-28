@@ -28,9 +28,6 @@
 	  ]))
 	];
 
-        # For convinience
-	# Need fish in normal user enviroment
-	# The "exec" makes it so it does not need to be closed 2 times
 	shellHook = ''
           exec fish
 	'';

@@ -5,7 +5,7 @@ import numpy as np
 
 
 # Traer los datos
-df = pd.read_csv("../../datos.csv")
+df = pd.read_csv("../Datos/datos.csv") # Temporal mientras solo se usa una muestra
 
 # Conversion de pulsos del encoder a grados
 df['Pendulo_grados'] = df['Medicion'] * (360 / 4096)
@@ -19,7 +19,7 @@ df["Milisegundos_desde_inicio"] = df.index * 0.2
 # Filtrado de la posicion
 df['Posicion'] = savgol_filter(
     df['Pendulo_grados'],
-    window_length=31,
+    window_length=124,
     polyorder=3,
     deriv=0,
 )
@@ -27,7 +27,7 @@ df['Posicion'] = savgol_filter(
 # Calculo y filtrado de la Velocidad
 df['Velocidad'] = savgol_filter(
     df['Pendulo_grados'],
-    window_length=31,
+    window_length=124,
     polyorder=3,
     deriv=1,
     delta=dt
@@ -36,7 +36,7 @@ df['Velocidad'] = savgol_filter(
 # Calculo y filtrado de la Aceleracion
 df['Aceleracion'] = savgol_filter(
     df['Pendulo_grados'],
-    window_length=71,
+    window_length=284,
     polyorder=3,
     deriv=2,
     delta=dt

@@ -18,7 +18,11 @@ const Modos_Salida Modo_Salida = LEGIBLE;
 void setup() {
   Serial.begin(115200); // Maximo estable
 
+  Inicializar_encoders();
+  Inicializar_motor();
+
   while (false) {
+    //Serial.println("Listening.");
     if (Serial.available() > 0) {
       char incomingByte = Serial.read();
       if (incomingByte == 'S') {
@@ -26,10 +30,6 @@ void setup() {
       }
     }
   };
-
-  Inicializar_encoders();
-
-  Inicializar_motor();
 
   Inicializar_telemetria();
 }
@@ -46,6 +46,7 @@ void loop() {
     switch (Comando) {
       case 'E':
         Encender_Motor();
+        Serial.println("Motor Encendido");
       break;
       
       case 'A':
@@ -60,10 +61,12 @@ void loop() {
 
       case 'D':
         Motor_Derecha();
+        Serial.println("D");
       break;
 
       case 'I':
         Motor_Izquierda();
+        Serial.println("I");
       break;
 
       case 'V':

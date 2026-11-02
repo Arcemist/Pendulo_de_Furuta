@@ -66,12 +66,12 @@ inline void Apagar_Motor() { TCCR4A &= ~(1 << COM4A1); }
 inline void Encender_Motor() { TCCR4A |= (1 << COM4A1); } 
 
 // Incheckeado que no esten al revez
-inline void Motor_Derecha() {
-  PORTH &= (1 << PH5);
+void Motor_Derecha() {
+  PORTH &= ~(1 << PH5);
   PORTH |= (1 << PH4); 
 }
 
-inline void Motor_Izquierda() {
-  PORTH &= (1 << PH4);
+void Motor_Izquierda() {
+  PORTH &= ~(1 << PH4);
   PORTH |= (1 << PH5);
 }

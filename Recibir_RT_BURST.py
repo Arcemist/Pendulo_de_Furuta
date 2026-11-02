@@ -3,7 +3,7 @@ import struct
 import csv
 
 # Configure your serial port settings
-SERIAL_PORT = "/dev/ttyUSB0"  # Change to '/dev/ttyUSB0' or '/dev/ttyACM0' on Linux
+SERIAL_PORT = "/dev/ttyACM0"  # Change to '/dev/ttyUSB0' or '/dev/ttyACM0' on Linux
 BAUD_RATE = 115200  # Match the transmitter's baud rate
 TOTAL_BYTES = 64  # 32 elements * 2 bytes each
 CSV_FILENAME = "datos.csv"
@@ -15,8 +15,15 @@ try:
         baudrate=BAUD_RATE,
         timeout=0.005
     )
+    
+    #time.sleep()
+
+    #while not ser.read_until().decode().strip() == 'Listening.': pass
+
+    ser.write(b'S')
 
     ser.reset_input_buffer()
+
 
     # Abrir el archivo
     with open( CSV_FILENAME, mode="w", newline="", encoding="utf-8" ) as csv_file:

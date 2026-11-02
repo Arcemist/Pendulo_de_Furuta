@@ -5,10 +5,10 @@ import numpy as np
 
 
 # Traer los datos
-df = pd.read_csv("arduino_data.csv")
+df = pd.read_csv("../../datos.csv")
 
 # Conversion de pulsos del encoder a grados
-df['Pendulo_grados'] = df['Pendulo'] * (360 / 1024)
+df['Pendulo_grados'] = df['Medicion'] * (360 / 4096)
 # Y desplazamiento para que quede centrado
 df['Pendulo_grados'] = df['Pendulo_grados'] - 180
 

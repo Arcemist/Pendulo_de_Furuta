@@ -11,18 +11,19 @@ se debe tambien cambiar la configuracion de la
 lectura por registros que esta en las interrupciones
 externas mas abajo en este archivo.
 */
-struct Encoder brazo = {
-  .A = 3,
-  .B = 2,
-  .Z = 5,
-  .count = 0
-};
 struct Encoder pendulo = {
   .A = 19,
   .B = 18,
-  .Z = 16,
+  .Z = 20,
   .count = 0
 };
+struct Encoder brazo = {
+  .A = 3,
+  .B = 2,
+  .Z = 21, // Es el unico otro de interrupcion
+  .count = 0
+};
+
 
 inline void Inicializar_encoders() {
 
@@ -73,42 +74,44 @@ inline void Inicializar_encoders() {
   }
 }
 
-void Pendulo_A() {
-  const bool valor_A = PINE & (1 << PE5); // Pin 3
-  const bool valor_B = PINE & (1 << PE4); // Pin 2
-
-  if (valor_A == valor_B) 
-    { pendulo.count--; }
-  else
-    { pendulo.count++; };
-}
-void Pendulo_B() {
-  const bool valor_A = PINE & (1 << PE5); // Pin 3
-  const bool valor_B = PINE & (1 << PE4); // Pin 2
-
-  if (valor_A == valor_B) 
-    { pendulo.count++; }
-  else 
-    { pendulo.count--; };
-}
-
 void Brazo_A() {
-  const bool valor_A = PIND & (1 << PD2); // Pin 19
-  const bool valor_B = PIND & (1 << PD3); // Pin 18
-
-  if (valor_A == valor_B) 
-    { brazo.count++; }
-  else
-    { brazo.count--; };
-}
-void Brazo_B() {
-  const bool valor_A = PIND & (1 << PD2); // Pin 19
-  const bool valor_B = PIND & (1 << PD3); // Pin 18
+  const bool valor_A = PINE & (1 << PE5); // Pin 3
+  const bool valor_B = PINE & (1 << PE4); // Pin 2
 
   if (valor_A == valor_B) 
     { brazo.count--; }
   else
     { brazo.count++; };
+}
+
+void Brazo_B() {
+  const bool valor_A = PINE & (1 << PE5); // Pin 3
+  const bool valor_B = PINE & (1 << PE4); // Pin 2
+
+  if (valor_A == valor_B) 
+    { brazo.count++; }
+  else 
+    { brazo.count--; };
+}
+
+void Pendulo_A() {
+  const bool valor_A = PIND & (1 << PD2); // Pin 19
+  const bool valor_B = PIND & (1 << PD3); // Pin 18
+
+  if (valor_A == valor_B) 
+    { pendulo.count++; }
+  else
+    { pendulo.count--; };
+}
+
+void Pendulo_B() {
+  const bool valor_A = PIND & (1 << PD2); // Pin 19
+  const bool valor_B = PIND & (1 << PD3); // Pin 18
+
+  if (valor_A == valor_B) 
+    { pendulo.count--; }
+  else
+    { pendulo.count++; };
 }
 
 void Pendulo_Referencia() { pendulo.count = 0; }

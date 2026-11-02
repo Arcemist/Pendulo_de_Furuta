@@ -5,7 +5,7 @@ inline float Segundos_a_Pulsos(float segundos) {
   no se considera relevante.
   */
   if (segundos < 0.001) { segundos = 0.001; };
-  return floor( segundos * 10000.0 );
+  return floor( segundos * 10000.0 ) - 1;
 }
 
 inline float Pulsos_a_Segundos(float pulsos) {

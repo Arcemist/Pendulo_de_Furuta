@@ -25,12 +25,6 @@ inline void Inicializar_telemetria() {
   OCR1A = 199;
   TIMSK1 |= (1 << OCIE1A);
 
-  // Liga el pin 11 al Timer 1
-  // Para probar con un ocsiloscopio
-  pinMode(11, OUTPUT);
-  TCCR1A |= (1 << COM1A0);
-  // Esta parte puede ser eliminada despues de probar
-
   interrupts();
 
   // Reduccion por defecto
@@ -40,7 +34,7 @@ inline void Inicializar_telemetria() {
     break;
 
     case LEGIBLE:
-      Reduccion = Segundos_a_Pulsos(4.0); // 4s
+      Reduccion = Segundos_a_Pulsos(0.8); // 4s
     break;
   }
 }
@@ -52,7 +46,7 @@ ISR(TIMER1_COMPA_vect) {
     Reductor = 1;
 
     switch (Modo_Salida) {
-      case LEGIBLE:
+      case LEGIBLE: {
         Espaciar_salida();
 
         switch (Modo_Funcionamiento) {
@@ -69,24 +63,27 @@ ISR(TIMER1_COMPA_vect) {
           break; 
         }
       break;
+      }
 
-      case RT_BURST:
+      case RT_BURST: {
         switch (Modo_Funcionamiento) {
           case PRUEBA_PENDULO:
             Lecturas[posicion_libre] = pendulo.count;
           break;
 
-          case PRUEBA_MOTOR:
+          case PRUEBA_MOTOR:                   
             Lecturas[posicion_libre] = brazo.count;
           break;
-
-          posicion_libre++; 
-          if (posicion_libre == 32) {
-            posicion_libre = 0;
-            Serial.write((uint8_t*)Lecturas, sizeof(Lecturas)); // Esto seguramente va a ser raro de leer
-          }
         }
+
+        posicion_libre++; 
+        if (posicion_libre == 32) {
+          posicion_libre = 0;
+          Serial.write((uint8_t*)Lecturas, sizeof(Lecturas)); // Esto seguramente va a ser raro de leer
+        }
+
       break;
+      }
     }
   }
 }
